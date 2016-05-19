@@ -1,3 +1,5 @@
+require('dotenv').load();
+
 const assert = require("assert");
 const bole = require("bole"); 
 const logstring = require("common-log-string");

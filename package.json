@@ -17,7 +17,9 @@
     "bole": "^2.0.0",
     "common-log-string": "^0.2.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "dotenv": "^2.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/npm/slack-hook-subscribe.git"
