@@ -45,5 +45,5 @@ server.on('after', function logEachRequest(request, response, route, error) {
 
 server.listen(port, function() {
   logger.info('listening on ' + port);
-  web.chat.postMessage(channelID, 'npm hooks slackbot coming on line beep boop');
+  web.chat.postMessage(channelID, 'arrrrr :wombat: captain hook, reporting for duty');
 });
