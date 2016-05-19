@@ -5,6 +5,7 @@ const bole = require("bole");
 const logstring = require("common-log-string");
 const makeReceiver = require("@npmcorp/npm-hook-receiver");
 const slack = require("@slack/client");
+const restify = require("restify");
 
 var logger = bole(process.env.SERVICE_NAME || 'hooks-bot');
 bole.output({ level: 'info', stream: process.stdout });
@@ -27,8 +28,10 @@ var opts = {
 };
 var server = makeReceiver(opts);
 
-server.post('/subscribe', function() {
-  web.chat.postMessage(channelID, "you are trying to subscribe");
+server.post('/subscribe', function(request, response, next) {
+  var messages = request._body.split('&')[8].split('+');
+  web.chat.postMessage(channelID, "subscription request received for " + messages[1]);
+  next();
 });
 
 server.get('/ping', function(req, res) {
