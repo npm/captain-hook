@@ -21,7 +21,7 @@ var web = new slack.WebClient(token)
 // Make a webhooks receiver and have it act on interesting events.
 // The receiver is a restify server!
 var opts = {
-  name:   process.env.SERVICE_NAME || 'hooks-bot',
+  name:   process.env.SERVICE_NAME || 'hooks-subscriber-bot',
   secret: process.env.SHARED_SECRET,
   mount:  process.env.MOUNT_POINT || '/incoming',
 };
