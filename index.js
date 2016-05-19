@@ -13,6 +13,9 @@ var channelID = process.env.SLACK_CHANNEL;
 assert(channelID, 'you must supply a slack channel ID in process.env.SLACK_CHANNEL');
 var port = process.env.PORT || '6666';
 
+// This is how we post to slack.
+var web = new slack.WebClient(token)
+
 // Make a webhooks receiver and have it act on interesting events.
 // The receiver is a restify server!
 var opts = {
