@@ -1,0 +1,30 @@
+{
+  "name": "slack-hook-subscribe",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "NODE_ENV=development npm start | bistre",
+    "start": "node index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@npmcorp/npm-hook-receiver": "git+ssh://git@github.com/npm/npm-hook-receiver.git",
+    "@slack/client": "^3.1.0",
+    "bistre": "^1.0.1",
+    "bole": "^2.0.0",
+    "common-log-string": "^0.2.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/npm/slack-hook-subscribe.git"
+  },
+  "bugs": {
+    "url": "https://github.com/npm/slack-hook-subscribe/issues"
+  },
+  "homepage": "https://github.com/npm/slack-hook-subscribe#readme",
+  "description": ""
+}
