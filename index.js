@@ -27,6 +27,15 @@ var opts = {
 };
 var server = makeReceiver(opts);
 
+server.post('/subscribe', function() {
+  web.chat.postMessage(channelID, "you are trying to subscribe");
+});
+
+server.get('/ping', function(req, res) {
+  res.send(200, 'pong');
+  next();
+});
+
 server.on('after', function logEachRequest(request, response, route, error) {
   logger.info(logstring(request, response));
 });
