@@ -16,11 +16,10 @@ var channelID = process.env.SLACK_CHANNEL;
 assert(channelID, 'you must supply a slack channel ID in process.env.SLACK_CHANNEL');
 var port = process.env.PORT || '6666';
 
-// This is how we post to slack.
+// how we post to slack
 var web = new slack.WebClient(token)
 
-// Make a webhooks receiver and have it act on interesting events.
-// The receiver is a restify server!
+// hook receiver is a restify server
 var opts = {
   name:   process.env.SERVICE_NAME || 'hooks-subscriber-bot',
   secret: process.env.SHARED_SECRET,
@@ -28,17 +27,21 @@ var opts = {
 };
 var server = makeReceiver(opts);
 
+// receive outgoing integration from slack `/captain-hook`
 server.post('/subscribe', function(request, response, next) {
   var messages = request._body.split('&')[8].split('+');
-  web.chat.postMessage(channelID, "subscription request received for " + messages[1]);
+  var package = messages[1];
+  web.chat.postMessage(channelID, "subscription request received for " + package);
   next();
 });
 
+// test route
 server.get('/ping', function(req, res) {
   res.send(200, 'pong');
   next();
 });
 
+// log requests that pass to next()
 server.on('after', function logEachRequest(request, response, route, error) {
   logger.info(logstring(request, response));
 });
