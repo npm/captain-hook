@@ -1,49 +1,99 @@
+// load the env file
 require('dotenv').load();
-
-const assert = require("assert");
-const bole = require("bole"); 
-const logstring = require("common-log-string");
-const makeReceiver = require("@npmcorp/npm-hook-receiver");
-const slack = require("@slack/client");
-const restify = require("restify");
-
-var logger = bole(process.env.SERVICE_NAME || 'hooks-bot');
-bole.output({ level: 'info', stream: process.stdout });
-
-var token = process.env.SLACK_API_TOKEN || '';
-assert(token, 'you must supply a slack api token in process.env.SLACK_API_TOKEN');
-var channelID = process.env.SLACK_CHANNEL;
-assert(channelID, 'you must supply a slack channel ID in process.env.SLACK_CHANNEL');
 var port = process.env.PORT || '6666';
 
-// This is how we post to slack.
-var web = new slack.WebClient(token)
+// how we log
+const logger = require("./src/lib/logger").logger;
+const logHandler = require("./src/lib/logger").logHandler;
 
-// Make a webhooks receiver and have it act on interesting events.
-// The receiver is a restify server!
-var opts = {
-  name:   process.env.SERVICE_NAME || 'hooks-subscriber-bot',
-  secret: process.env.SHARED_SECRET,
-  mount:  process.env.MOUNT_POINT || '/incoming',
-};
-var server = makeReceiver(opts);
+// how we receive npm hooks
+const server = require("./src/lib/hook_receiver");
 
-server.post('/subscribe', function(request, response, next) {
-  var messages = request._body.split('&')[8].split('+');
-  web.chat.postMessage(channelID, "subscription request received for " + messages[1]);
-  next();
+// how we post to slack
+const slack = require('./src/lib/slack_client').client;
+const channelID = require('./src/lib/slack_client').channelID;
+
+// routes live in a separate place
+const routes = require('./src/routes');
+
+server.get('/ping', routes.ping);
+server.post('/subscribe', routes.subscriptions.create);
+server.on('after', logHandler);
+
+// All hook events, with special handling for some.
+server.on('hook', function onIncomingHook(hook) {
+  var pkg = hook.name.replace('/', '%2F');
+  var type = hook.type;
+  var change = hook.event.replace(type + ':', '');
+
+  var message;
+  console.log(hook.event);
+  var user = hook.change ? hook.change.user : '';
+
+  switch (hook.event) {
+    case 'package:star':
+      message = `★ \<https://www.npmjs.com/~${user}|${user}\> starred :package: \<https://www.npmjs.com/package/${pkg}|${hook.name}\>`;
+      break;
+
+    case 'package:unstar':
+      message = `✩ \<https://www.npmjs.com/~${user}|${user}\> unstarred :package: \<https://www.npmjs.com/package/${pkg}|${hook.name}\>`;
+      break;
+
+    case 'package:publish':
+      message = `:package: \<https://www.npmjs.com/package/${pkg}|${hook.name}\>@${hook.change.version} published!`;
+      break;
+
+    case 'package:unpublish':
+      message = `:package: \<https://www.npmjs.com/package/${pkg}|${hook.name}\>@${hook.change.version} unpublished`;
+      break;
+
+    case 'package:dist-tag':
+      message = `:package: \<https://www.npmjs.com/package/${pkg}|${hook.name}\>@${hook.change.version} new dist-tag: \`${hook.change['dist-tag']}\``;
+      break;
+
+    case 'package:dist-tag-rm':
+      message = `:package: \<https://www.npmjs.com/package/${pkg}|${hook.name}\>@${hook.change.version} dist-tag removed: \`${hook.change['dist-tag']}\``;
+      break;
+
+    case 'package:owner':
+      message = `:package: \<https://www.npmjs.com/package/${pkg}|${hook.name}\> owner added: \`${hook.change.user}\``;
+      break;
+
+    case 'package:owner-rm':
+      message = `:package: \<https://www.npmjs.com/package/${pkg}|${hook.name}\> owner removed: \`${hook.change.user}\``;
+      break;
+
+    default:
+      message = [
+        `:package: \<https://www.npmjs.com/package/${pkg}|${hook.name}\>`,
+        '*event*: ' + change,
+        '*type*: ' + type,
+      ].join('\n');
+  }
+
+  var opts = {
+    as_user: true,
+    username: "captainhook"
+  };
+  slack.chat.postMessage(channelID, message, opts);
 });
 
-server.get('/ping', function(req, res) {
-  res.send(200, 'pong');
-  next();
+server.on('hook:error', function(message) {
+  var opts = {
+    as_user: true,
+    username: "captainhook"
+  }
+  slack.chat.postMessage(channelID, '*error handling web hook:* ' + message);
 });
 
-server.on('after', function logEachRequest(request, response, route, error) {
-  logger.info(logstring(request, response));
-});
 
+
+// start the server
 server.listen(port, function() {
   logger.info('listening on ' + port);
-  web.chat.postMessage(channelID, 'arrrrr :wombat: captain hook, reporting for duty');
+  var opts = {
+    as_user: true,
+    username: "captainhook"
+  }
+  slack.chat.postMessage(channelID, "arrrr captain hook reporting for duty", opts);
 });
