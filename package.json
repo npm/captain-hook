@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@npmcorp/npm-hook-receiver": "git+ssh://git@github.com/npm/npm-hook-receiver.git",
+    "@npmcorp/npm-hook-receiver": "0.0.5",
     "@slack/client": "^3.1.0",
     "bistre": "^1.0.1",
     "body-parser": "^1.15.1",
