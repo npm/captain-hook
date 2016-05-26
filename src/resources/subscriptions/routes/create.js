@@ -29,7 +29,11 @@ var checkSub = function(info) {
 // receive outgoing integration from slack `/captain-hook`
 module.exports = function(request, response, next) {
   var info = helpers.parseRequestBody(request);
-  slack.chat.postMessage(slack.dataStore.getDMByName("ag_dubs").id, messenger.buildRequestMessage(info));
+  var opts = {
+    as_user: true,
+    username: "captainhook"
+  };
+  slack.chat.postMessage(channelID, messenger.buildRequestMessage(info), opts);
   var hook_opts = helpers.buildHookRequestOpts(info);
 //  checkSub(info);
   Request.post(hook_opts, function(err, res, body) {
@@ -41,9 +45,9 @@ module.exports = function(request, response, next) {
       Subscription.forge(subscription).save()
       .then(function(record) {
         if (!record) {
-          slack.chat.postMessage(slack.dataStore.getDMByName("ag_dubs").id, messenger.bookshelfCreateError);
+          slack.chat.postMessage(channelID, messenger.bookshelfCreateError, opts);
         } else {
-          slack.chat.postMessage(slack.dataStore.getDMByName("ag_dubs").id, messenger.buildSuccessMessage(record));
+          slack.chat.postMessage(channelID, messenger.buildSuccessMessage(record), opts);
         }
       })
       .catch();
