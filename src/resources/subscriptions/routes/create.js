@@ -9,49 +9,60 @@ const Subscription = require("../model");
 const helpers = require("../helpers");
 const messenger = require("../messenger");
 
-var checkSub = function(info) {
-  User.where({ id: 1 })
-    .fetch({ withRelated: ['subscriptions'] })
-    .then(function(user) {
-      var subscriptions = user.related('subscriptions');
-      for (var i=0; i<subscriptions.length;i++) {
-        Subscription.where(subscriptions[i]).fetch()
-        .then(function(record) {
-          if (record.type === info.type && record.name === info.name) {
-            console.log("Subscription already exists!");
-          }
-        })
-        .catch();
-      }
-    });
-}
+const opts = {
+  as_user: true,
+  username: "captainhook"
+};
 
-// receive outgoing integration from slack `/captain-hook`
-module.exports = function(request, response, next) {
-  var info = helpers.parseRequestBody(request);
-  var opts = {
-    as_user: true,
-    username: "captainhook"
-  };
-  slack.chat.postMessage(channelID, messenger.buildRequestMessage(info), opts);
+var subscribe = function(info) { 
   var hook_opts = helpers.buildHookRequestOpts(info);
-//  checkSub(info);
   Request.post(hook_opts, function(err, res, body) {
     if (err) {
-      console.log(err);
+      slack.chat.postMessage(channelID, err.toString(), opts);
     } else {
       console.log('just created hook with id=' + body.id);
       var subscription = helpers.buildSubscription(hook_opts, body);
       Subscription.forge(subscription).save()
       .then(function(record) {
         if (!record) {
-          slack.chat.postMessage(channelID, messenger.bookshelfCreateError, opts);
+          slack.chat.postMessage(channelID, messenger.bookshelf, opts);
         } else {
-          slack.chat.postMessage(channelID, messenger.buildSuccessMessage(record), opts);
+          var message =  messenger.buildSuccessMessage(record);
+          slack.chat.postMessage(channelID, message, opts);
         }
       })
       .catch();
     }
   });
+};
+
+var help = function() {
+  var message = "arrrr! i'm captain hook\n" +
+         "*usage:* \n" +
+         "`/captain-hook <command> <type> <name> <event>`\n" +
+         "\n" +
+         "\t\t*command*: `subscribe` (create a new webhook), `help`\n" +
+         "\t\t*type*: `package` or `scope`\n" +
+         "\t\t*name*: the name of the package or scope, e.g. `lodash`\n" +
+         "\t\t*event*: this doesn't actually work yet :grimacing: :sweat_smile:\n";
+  slack.chat.postMessage(channelID, message, opts);
+};
+
+// receive outgoing integration from slack `/captain-hook`
+module.exports = function(request, response, next) {
+  var info = helpers.parseRequestBody(request);
+  var command = info.command.slice(5);
+  var message;
+  switch(command) {
+    case "subscribe":
+      subscribe(info);
+      break;
+    case "help":
+      help();
+      break;
+    default:
+      help();
+      break;
+  }
   next();
 };
