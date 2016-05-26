@@ -17,7 +17,7 @@ const channelID = require('./src/lib/slack_client').channelID;
 const routes = require('./src/routes');
 
 server.get('/ping', routes.ping);
-server.post('/subscribe', routes.subscriptions.create);
+server.post('/slack', routes.subscriptions.slack);
 server.on('after', logHandler);
 
 // All hook events, with special handling for some.
