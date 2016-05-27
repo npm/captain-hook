@@ -36,12 +36,32 @@ var subscribe = function(info) {
   });
 };
 
+var list = function(info) {
+  Subscription.where({ 'user_id': 1}).fetchAll()
+  .then(function(collection) {
+    console.log(collection);
+    var message = "Your Hooks:\n" + 
+                  "*id*\t\t*type*\t\t*name*\t\t*event*\n";
+    var subscriptions = collection.models;
+    for (var i = 0; i < subscriptions.length; i++) {
+      var subscription = subscriptions[i].attributes;
+      console.log(subscription);
+      message += subscription.id + "\t\t" +
+                 subscription.type + "\t\t" +
+                 subscription.name + "\t\t" +
+                 subscription.event + "\n";
+    }
+    slack.chat.postMessage(channelID, message, opts);
+  })
+  .catch();
+}
+
 var help = function() {
   var message = "arrrr! i'm captain hook\n" +
          "*usage:* \n" +
          "`/captain-hook <command> <type> <name> <event>`\n" +
          "\n" +
-         "\t\t*command*: `subscribe` (create a new webhook), `help`\n" +
+         "\t\t*command*: `subscribe` (create a new webhook), `help`, `list`\n" +
          "\t\t*type*: `package` or `scope`\n" +
          "\t\t*name*: the name of the package or scope, e.g. `lodash`\n" +
          "\t\t*event*: this doesn't actually work yet :grimacing: :sweat_smile:\n";
@@ -56,6 +76,9 @@ module.exports = function(request, response, next) {
   switch(command) {
     case "subscribe":
       subscribe(info);
+      break;
+    case "list":
+      list(info);
       break;
     case "help":
       help();
