@@ -36,6 +36,28 @@ var subscribe = function(info) {
   });
 };
 
+var unsubscribe = function(info) {
+  Subscription.where({ type: info.type, name: info.name }).fetch()
+  .then(function(record) {
+    var hook_opts = {
+      uri: "https://registry.npmjs.org/-/npm/v1/hooks/hook/" + record.attributes.hook_id,
+      auth: { bearer: process.env.NPM_AUTH_TOKEN }
+    };
+    Request.delete(hook_opts, function(err, res, body) {
+      if (err) {
+        slack.chat.postMessage(channelID, body, opts);
+      } else {
+        record.destroy()
+        .then(function(record) {
+          slack.chat.postMessage(channelID, "Subscription successfully deleted!", opts);
+        })
+        .catch();
+      }
+    });
+  })
+  .catch();
+};
+
 var list = function(info) {
   Subscription.where({ 'user_id': 1}).fetchAll()
   .then(function(collection) {
@@ -54,7 +76,7 @@ var list = function(info) {
     slack.chat.postMessage(channelID, message, opts);
   })
   .catch();
-}
+};
 
 var help = function() {
   var message = "arrrr! i'm captain hook\n" +
@@ -76,6 +98,9 @@ module.exports = function(request, response, next) {
   switch(command) {
     case "subscribe":
       subscribe(info);
+      break;
+    case "unsubscribe":
+      unsubscribe(info);
       break;
     case "list":
       list(info);
