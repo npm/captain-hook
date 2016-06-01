@@ -2,6 +2,7 @@ module.exports = {
   parseRequestBody: function (request) {
     var messages = request._body.split('&')[8].split('+');
     return {
+      command: messages[0],
       type: messages[1],
       name: messages[2],
       event: messages[3],
