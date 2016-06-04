@@ -35,8 +35,15 @@ you'll need to [download it].
   You now have a service running on [`localhost:6666`]. You'll probably want to expose
   that to the internet for local development. [`ngrok`] is a great, free option.
 
+## web interface
+
+the `captain hook` web interface is an express app. it servers basic CRUD functionality for the two resources: `users` and `subscriptions`.
+
+to start it, run `npm run start:web` and then visit [`http://localhost:8080`].
+
 [NodeJS]: https://nodejs.org
 [download it]: https://nodejs.org
 [`localhost:6666`]: http://localhost:6666
 [`ngrok`]: https://ngrok.com/
 [Knex]: http://knexjs.org/
+[`http://localhost:8080`]: http://localhost:8080
