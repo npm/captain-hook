@@ -35,7 +35,7 @@ const login = function(info) {
       //   overwrite token
       })
       .catch(function(){
-        let userOpts = helpers.buildUser(opts, body);
+        var userOpts = helpers.buildUser(opts, body);
         return User.forge(userOpts).save();
       })
       .finally(function(){
