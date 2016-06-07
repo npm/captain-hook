@@ -1,4 +1,4 @@
-const makeReceiver = require("@npmcorp/npm-hook-receiver");
+const makeReceiver = require("npm-hook-receiver");
 
 // hook receiver is a restify server
 var opts = {
