@@ -29,6 +29,13 @@ module.exports = {
       "type": hook_opts.json.type,
       "event": hook_opts.json.event
     }
+  },
+  buildUser: function(userOpts, body) {
+    return {
+      'slack-user-id': userOpts.json.user.id,
+      'slack-team-id': userOpts.json.team.id,
+      'npm-token-hashed': body.token
+    };
   }
 }
 
