@@ -14,6 +14,42 @@ const opts = {
   username: "captainhook"
 };
 
+const login = function(info) {
+  // grab token + username + team id (we don't have this yet)
+  // anything missing? (would be the token, likely)
+  //    give feedback
+  //
+  // is token invalid?
+  var opts = {
+    uri:'https://registry.npmjs.com/-/whoami',
+    auth: { bearer: info.token },
+  };
+  return Request.get(opts, function(err, res, body){
+    if(res.statusCode === 401) {
+      //return feedback
+    }
+
+    return User.where('token', info.token)
+      .fetch()
+      .then(function(user){
+      //   overwrite token
+      })
+      .catch(function(){
+        let userOpts = helpers.buildUser(opts, body);
+        return User.forge(userOpts).save();
+      })
+      .finally(function(){
+    // give feedback that user is created/logged in
+      });
+    //
+  });
+};
+
+const logout = function(info) {
+  // delete token
+  // kill notifications
+};
+
 var subscribe = function(info) { 
   var hook_opts = helpers.buildHookRequestOpts(info);
   Request.post(hook_opts, function(err, res, body) {
@@ -96,6 +132,9 @@ module.exports = function(request, response, next) {
   var command = info.command.slice(5);
   var message;
   switch(command) {
+    case "login":
+      login(info);
+      break;
     case "subscribe":
       subscribe(info);
       break;
