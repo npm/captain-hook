@@ -129,9 +129,7 @@ var help = function() {
 // receive outgoing integration from slack `/captain-hook`
 module.exports = function(request, response, next) {
   var info = helpers.parseRequestBody(request);
-  var command = info.command.slice(5);
-  var message;
-  switch(command) {
+  switch(info.command) {
     case "login":
       login(info);
       break;
