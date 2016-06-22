@@ -127,7 +127,10 @@ var help = function() {
          "\t\t*command*: `subscribe` (create a new webhook), `help`, `list`\n" +
          "\t\t*type*: `package` or `scope`\n" +
          "\t\t*name*: the name of the package or scope, e.g. `lodash`\n" +
-         "\t\t*event*: this doesn't actually work yet :grimacing: :sweat_smile:\n";
+         "\t\t*event*: this doesn't actually work yet :grimacing: :sweat_smile:\n" +
+         "\n" +
+         "\n" +
+         "/captain-hook login <token>";
 
   slack.chat.postMessage(channelID, message, slackOpts);
 };
