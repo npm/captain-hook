@@ -29,8 +29,10 @@ const login = function(info) {
       //return feedback
     }
 
-    return User.where('token', info.token)
-      .fetch()
+    return User.where('npm-token-hashed', info.token)
+      .fetch({
+        require: false
+      })
       .then(function(user){
       //   overwrite token
       })
