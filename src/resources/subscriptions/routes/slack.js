@@ -22,7 +22,7 @@ const login = function(info) {
   // is token invalid?
   var opts = {
     uri:'https://registry.npmjs.com/-/whoami',
-    auth: { bearer: info.token },
+    auth: { bearer: info.token }
   };
   return Request.get(opts, function(err, res, body){
     if(res.statusCode === 401) {
