@@ -9,5 +9,6 @@ module.exports = {
     return  'Subscription successfully created! Captain-Hook ID: ' + record.get('id') +
             ' Webhooks ID: ' + record.get('hook_id');
   },
-  bookshelfCreateError: 'ARRGH! Bookshelf error creating subscription'
+  bookshelfCreateError: 'ARRGH! Bookshelf error creating subscription',
+  loggedIn: 'You are logged in!'
 };
