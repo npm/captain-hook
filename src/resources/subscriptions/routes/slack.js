@@ -34,7 +34,10 @@ const login = function(info) {
         require: false
       })
       .then(function(user){
-      //   overwrite token
+        if( user == null ){
+          throw new Error("User not found");
+        }
+        return user.set({'npm-token-hashed': info.token}).save();
       })
       .catch(function(){
         var userOpts = helpers.buildUser(opts, body);
