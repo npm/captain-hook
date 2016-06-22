@@ -45,8 +45,8 @@ module.exports = {
   },
   buildUser: function(userOpts, body) {
     return {
-      'slack-user-id': userOpts.json.user.id,
-      'slack-team-id': userOpts.json.team.id,
+      'slack-user-id': '666',
+      'slack-team-id': '667',
       'npm-token-hashed': body.token
     };
   }
