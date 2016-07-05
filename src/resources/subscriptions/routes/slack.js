@@ -15,18 +15,13 @@ const slackOpts = {
 };
 
 const login = function(info) {
-  // grab token + username + team id (we don't have this yet)
-  // anything missing? (would be the token, likely)
-  //    give feedback
-  //
-  // is token invalid?
   var opts = {
     uri:'https://registry.npmjs.com/-/whoami',
     auth: { bearer: info.token }
   };
   return Request.get(opts, function(err, res, body){
     if(res.statusCode === 401) {
-      //return feedback
+      slack.chat.postMessage(channelID, body, slackOpts);
     }
 
     return User.where('npm-token-hashed', info.token)
@@ -46,13 +41,11 @@ const login = function(info) {
       .finally(function(){
         slack.chat.postMessage(channelID, messenger.loggedIn, slackOpts);
       });
-    //
   });
 };
 
 const logout = function(info) {
-  // delete token
-  // kill notifications
+  // this is waiting on Slack App Integration
 };
 
 var subscribe = function(info) { 
