@@ -1,12 +1,25 @@
 module.exports = {
   parseRequestBody: function (request) {
     var messages = request._body.split('&')[8].split('+');
-    return {
-      command: messages[0],
-      type: messages[1],
-      name: messages[2],
-      event: messages[3],
-      secret: messages[4]
+    var command = messages[0].replace("text=", "");
+    switch (command) {
+      case "login":
+        return {
+          command: command,
+          token: messages[1]
+        };
+      case "help":
+        return {
+          command: command
+        };
+      default:
+        return {
+          command: command,
+          type: messages[1],
+          name: messages[2],
+          event: messages[3],
+          secret: messages[4]
+        };
     }
   },
   buildHookRequestOpts: function(info) {
@@ -29,6 +42,13 @@ module.exports = {
       "type": hook_opts.json.type,
       "event": hook_opts.json.event
     }
+  },
+  buildUser: function(userOpts, body) {
+    return {
+      'slack-user-id': '666',
+      'slack-team-id': '667',
+      'npm-token-hashed': body.token
+    };
   }
 }
 
