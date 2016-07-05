@@ -1,0 +1,30 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,900);
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+.subtitle {
+  font-size: 2em;
+  font-weight: 700;
+}
+
+h1 {
+  font-weight: 900;
+}
+
+h1, div {
+  text-align: center;
+}
+
+#haggis {
+  width: 100%;
+}
+
+#npm {
+  width: 50%;
+}
+
+.jumbo {
+  margin-top: 10em;
+}

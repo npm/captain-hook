@@ -11,6 +11,8 @@ const Subscription = require('./resources/subscriptions/model');
 
 const API = require('./lib/api');
 
+app.use(express.static('assets'));
+
 app.get('/', function(req, res) {
   res.redirect('/v1');
 });
@@ -18,6 +20,10 @@ app.get('/', function(req, res) {
 app.get('/v1', function (request, response) {
   response.set('Content-Type', 'application/json');
   response.send(JSON.stringify(API.index(), null, 2));
+});
+
+app.get('/join', function(request, response) {
+  response.sendfile(__dirname + '/index.html');
 });
 
 resources.forEach(function (resource) {
