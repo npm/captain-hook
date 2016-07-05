@@ -8,7 +8,7 @@
     "db:setup": "createdb dev && knex migrate:latest && knex seed:run",
     "db:reset": "dropdb dev && npm run db:setup",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:web": "live-server ./"
+    "start:web": "node server"
   },
   "keywords": [],
   "author": "",
