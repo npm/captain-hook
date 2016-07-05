@@ -9,6 +9,7 @@ const instanceProps = {
 
 const classProps = {
   typeName: 'subscriptions',
+  filters: {},
   relations: [
     'user'
   ]
